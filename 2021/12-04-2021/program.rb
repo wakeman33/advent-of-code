@@ -17,25 +17,25 @@ class Board
     @row_4 = [].fill(0, 5) {|i| Space.new()}
     @row_5 = [].fill(0, 5) {|i| Space.new()}
     @h_board = [@row_1, @row_2, @row_3, @row_4, @row_5]
-    @v_board = @h_board.transpose
 
+    @v_board = @h_board.transpose
   end
 
   def populate_board(board_input)
-    row = 0
+    row_index = 0
+    space_index = 0
     board_input.each do |line|
-      line.strip!
-      col = 0
-      line.split(/\s+/).each do |value|
-        s = @h_board[row][col]
-        s.value = value
-        col += 1
+      row = @h_board[row_index]
+      line.strip.split(' ').each do |value|
+        row[space_index].value = value.strip
+        space_index += 1
       end
-      row += 1
+      space_index = 0
+      row_index += 1
     end
   end
 
-  def unmarked_sum
+  def unmarked_sum()
     sum_array = []
 
     @h_board.each do |row|
@@ -70,15 +70,14 @@ class Board
   def show
     @h_board.each do |row|
       row.each do |space|
-        m = space.marked ? "M" : ""
-        print " #{space.value}#{m} "
+        print "'#{space.value} [#{space.marked}]'"
       end
       print "\n"
     end
     puts '---------------------'
     @v_board.each do |row|
       row.each do |space|
-        print " '#{space.value}' "
+        print "'#{space.value} [#{space.marked}]'"
       end
       print "\n"
     end
@@ -88,29 +87,33 @@ class Board
 
   def check_for_win
     # Check horrizontal
-    win = true
     @h_board.each do |row|
+      row_full = true
       row.each do |space|
-        win &= space.marked
+        row_full = space.marked && row_full
       end
-      if win
-        break
+      if row_full
+        return true
       end
+
+      # reset the value
+      row_full = true
     end
     
     # Check verticle
-    if !win
-      win = true
-      @h_board.each do |row|
-        row.each do |space|
-          win &= space.marked
-        end
-        if win
-          break
-        end
-      end     
+    @v_board.each do |row|
+      row_full = true
+      row.each do |space|
+        row_full = space.marked && row_full
+      end
+      if row_full
+        return true
+      end
+
+      # reset the value
+      row_full = true
     end
-    win
+    false
   end
 end
 
@@ -149,20 +152,50 @@ end
 #   b.show
 # end
  
+# calling_sheet.strip!.split(',').each do |number|
+#   puts "Calling: " + number.to_s
+#   board_list.each do |board|
+#     board.mark_board(number)
+#     win = board.check_for_win()
+#     if win
+#       puts 'Found a winner'
+#       puts 'Number: ' + number.to_s
+#       board.show
+#       board_sum = board.unmarked_sum
+#       puts 'Board Sum:'
+#       puts board_sum
+#       puts number
+#       puts "Answer"
+#       puts number.to_i * board_sum
+#       exit
+#     end
+#   end
+# end
+
+last_to_win = {board: nil, number: nil}
 calling_sheet.strip!.split(',').each do |number|
+  puts "Calling: " + number.to_s
+  puts "Board Count: " + board_list.count.to_s
   board_list.each do |board|
     board.mark_board(number)
-    win = board.check_for_win
+    win = board.check_for_win()
     if win
-      puts "FOUND A WINNER"
-      puts "Number: #{number}"
-      board.show
-      sum = board.unmarked_sum
-      puts "Sum: #{sum}"
-      puts "Answer: #{number.to_i*sum.to_i}"
+      puts 'Found a winner'
+      last_to_win[:board] = board
+      last_to_win[:number] = number
+      board_list.delete_at(board_list.index(last_to_win[:board]))
     end
   end
-  
 end
+
+calling_number = last_to_win[:number]
+board = last_to_win[:board]
+
+puts "Calling Number"
+puts calling_number
+puts "Board Sum"
+puts board.unmarked_sum
+puts "Answer"
+puts calling_number.to_i * board.unmarked_sum
 
 
