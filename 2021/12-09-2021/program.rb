@@ -2,6 +2,7 @@ class MapPoint
   attr_accessor :elevation, :lowest
   def initialize(point_elevation)
     @elevation = point_elevation
+    @basin_size = 0
     @lowest = false
   end
 end
@@ -128,6 +129,33 @@ class Map
       end
     end
     risk
+  end
+
+  def check_neighbors(x_pos, y_pos)
+    ul = 
+    u = 
+    ur = 
+    r =
+    rd = 
+    d = 
+    dl = 
+    l = 
+  end
+
+  def find_basin_size(point)
+
+  end
+
+  def find_largest_basins()
+    @map.each do |row|
+      row.each do |point|
+        if point.lowest
+          # Calculate basin
+        else
+          next
+        end
+      end
+    end
   end
 
 end
