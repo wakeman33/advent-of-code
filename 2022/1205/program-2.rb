@@ -7,6 +7,7 @@ def clean_container_item(raw)
   if raw.match?(/\w/)
     raw.sub!('[','')
     raw.sub!(']','')
+    #raw.strip
   else
     # for debuging purposes
     # raw = '  '
@@ -41,18 +42,21 @@ f.readlines.each do |line|
   end
 
 end
+# delete row numbers
+# container_list.delete_at(container_list.length - 1)
 
 t_list = container_list.transpose
 t_list.map {|i| i.compact!}
 instructions_list.each do |instruction|
-  t_list.each {|i| puts "#{i}"}
+  # t_list.each {|i| puts "#{i}"}
   count, from, to = instruction
-  puts "move #{count} from #{from} to #{to}"
+  # puts "move #{count} from #{from} to #{to}"
   items = t_list[from - 1].shift(count)
   t_list[to - 1] = items.concat(t_list[to - 1])
 end
 
 puts "Containers"
 container_list.each {|i| puts i.join}
+puts
 t_list.each {|i| puts i.join}
 #instructions_list.each {|x| puts x.join}
