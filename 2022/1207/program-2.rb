@@ -81,7 +81,8 @@ def sum(branch)
 end
 
 
-$grand_total = 0
+$grand_total = 30000000
+$needed_space = 0
 def get_sums(branch)
   if branch.keys.hash  == ['size'].hash
     return
@@ -94,10 +95,25 @@ def get_sums(branch)
     end
 
 
-    if key
-    end
     total = sum(branch[key])
-    $grand_total += total if total <= 100000
+
+    if key == '/'
+      
+      free_space = 70000000 - total
+      $needed_space = 30000000 - free_space
+      puts "free space"
+      puts free_space
+      puts "needed space"
+      puts $needed_space
+      puts
+    end
+
+    if  total > $needed_space && total < $grand_total
+      $grand_total = total
+      puts $grand_total
+      puts total
+      puts $needed_space
+    end
     get_sums(branch[key])
   end 
 end
