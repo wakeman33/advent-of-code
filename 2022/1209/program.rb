@@ -1,17 +1,19 @@
-f = File.new('test-2.txt', 'r')
+f = File.new('input.txt', 'r')
 
 class Snake
   attr_accessor :grid, :count
   def initialize(x, y, grid)
+    @tail_count = 8
     @head = [x, y] 
     @tail = []
-    (0..8).each {|i| @tail.push([x,y])}
+    (0..@tail_count).each {|i| @tail.push([x,y])}
     @grid = grid
 
     #initialize starting point
     @grid[@head[0]] = [] if @grid[@head[0]].nil?
     @grid[@head[0]][@head[1]] = true if @grid[@head[0]][@head[1]].nil?
-    @count = 0
+    @count = []
+    @count.push([x,y].join.hash)
   end
 
   def update_head(x, y)
@@ -30,62 +32,28 @@ class Snake
       space = @tail[space_index]
       puts "Prev Tail: #{prev_x}, #{prev_y}"
       puts "Space: #{space[0]}, #{space[1]}"
-      mark = (@tail.length - 1) == space_index
-      if mark
-        puts "Last Tail: #{space[0]}, #{space[1]}"
-      end
 
-      if !touching?(prev_x, prev_y, space[0], space[1])
-        puts "NOT TOUCHING"
-        puts "Tail: #{space[0]}, #{space[1]}"
-
-        x, y = get_new_coord(prev_x, prev_y, space[0], space[1])
+      x, y = get_new_coord(prev_x, prev_y, space[0], space[1])
+      puts "NEW: #{x}, #{y}"
         
-        # Update Space
-        space[0] = x
-        space[1] = y
+      # Update Space
+      space[0] = x
+      space[1] = y
 
-
-        puts "Updated_Tail: #{space[0]}, #{space[1]}"
-
-        update_space(space[0], space[1]) if mark
-        if mark
-          @count += 1
-          puts "Mark Last Tail: #{space[0]}, #{space[1]}"
-        end
-      else
-        puts "TOUCHING"
-      end
+      puts "Updated_Tail: #{space[0]}, #{space[1]}"
       # Update  prev
+
       prev_x = space[0]
       prev_y = space[1]
       puts
+      if space_index == @tail_count
+        tail_hash = [x,y].join.hash
+        @count.push(tail_hash) if !@count.include?(tail_hash)
+      end
     end
     puts
   end
 
-  def touching?(first_x, first_y, second_x, second_y)
-    isTouching = false
-    x_dist = (first_x - second_x).abs
-    y_dist = (first_y - second_y).abs
-  
-    # Check Verticle and Horrizontal
-    if first_x == second_x && y_dist == 1
-      isTouching = true
-    elsif first_y == second_y && x_dist == 1
-      isTouching = true
-    elsif first_x == second_x && first_y == second_y
-      isTouching = true
-    end
-  
-    # Check Diaginal - Diaginal Distance of a 1x1 triangle
-    if (x_dist ** 2 + y_dist ** 2) == Math.sqrt(2)
-      isTouching = true
-    end
-  
-    isTouching
-  end
- 
   def get_new_coord(first_x, first_y, second_x, second_y)
     new_x = second_x
     new_y = second_y
@@ -139,6 +107,22 @@ class Snake
       new_x -= 1
       new_y -= 1
     end
+
+    if second_x - 2 == first_x && second_y - 2 == first_y
+      new_x -=1
+      new_y -=1
+    elsif second_x + 2 == first_x && second_y + 2 == first_y
+      new_x +=1
+      new_y +=1
+    elsif second_x + 2 == first_x && second_y - 2 == first_y
+      new_x +=1
+      new_y -=1
+    elsif second_x - 2 == first_x && second_y + 2 == first_y
+      new_x -=1
+      new_y +=1
+    end
+
+
     [new_x, new_y]
   end
 
@@ -212,19 +196,5 @@ f.readlines.each do |line|
   puts "---------"
 end
 
-puts "COUNT"
-puts s.count
+puts s.count.length
 
-# count = 0
-# grid.each do |row|
-#   next if row.nil?
-#   row.each do |space|
-#     if !space.nil?
-#       if space
-#         count += 1 
-#       end
-#     end
-#   end
-# end
-# 
-# puts "COUNT #{count}"
