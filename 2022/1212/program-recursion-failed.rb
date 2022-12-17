@@ -1,16 +1,24 @@
 f = File.new('input.txt', 'r')
 
 $grid = []
-start_x = 0
-start_y = 0
+$start_x = 0
+$start_y = 0
+
+$end_x = 0
+$end_y = 0
 
 row_count = 0
 f.readlines.each do |line|
   row = line.scan(/\w/)
   $grid.push(row)
   if row.index('S')
-    start_x = row.index('S')
-    start_y = row_count
+    $start_x = row.index('S')
+    $start_y = row_count
+  end
+
+  if row.index('E')
+    $end_x = row.index('E')
+    $end_y = row_count
   end
     
   row_count += 1
@@ -20,7 +28,14 @@ end
 #   puts row.join
 # end
 # 
-# puts "Start: #{start_x}, #{start_y}"
+puts "Start: #{$start_x}, #{$start_y}"
+puts "End: #{$end_x}, #{$end_y}"
+
+def dist_from_point_to_line(point_x, point_y)
+  top = ($end_x - $start_x) * ($start_y - point_y) - ($start_x - point_x) * ($end_y - $start_y)
+  denom = Math.sqrt(($end_x - $start_x)**2 + ($end_y - $start_y)**2)
+  top/denom
+end
 
 def can_move(loc, current_level)
   x = loc[0]
@@ -87,14 +102,28 @@ def take_step(loc, current_level, step_list)
   right = [x + 1, y]
   left = [x - 1, y]
 
-  directions = [down, up, right, left]
+  directions = [right, down, up, left]
 
-  #puts "Current Location: #{loc.join(',')}"
-  directions.each do |direction|
+  weighted_directions = directions.map do |direction|
+    dist = dist_from_point_to_line(direction[0], direction[1])
+    {dist.abs => direction}
+  end
+
+  new_directions = weighted_directions.sort_by {|i| i.keys[0]}
+  # puts new_directions.join(', ')
+
+  if step_list.length == 10
+    #exit
+  end
+
+  puts "Current Location: #{loc.join(',')}"
+  new_directions.each do |item|
+    direction = item.values[0]
+
     # puts can_move(direction, current_level)
     # puts "Is Previous Move? #{is_previous_move(step_list, direction)}"
     # puts "#{loc[0]}, #{loc[1]}"
-    puts current_level
+    # puts current_level
     # puts
     if can_move(direction, current_level) && !is_previous_move(step_list, direction)
       new_step_list = step_list.dup
@@ -113,5 +142,5 @@ def take_step(loc, current_level, step_list)
   # puts "UNWINDING"
 end
 
-take_step([start_x, start_y], 'a', [[start_x, start_y].hash])
+take_step([$start_x, $start_y], 'a', [[$start_x, $start_y].hash])
 puts "Shortest #{$shortest}" 
