@@ -55,7 +55,7 @@ def can_move(loc, current_level)
   new_level = 'z' if new_level == 'E'
   level_diff = new_level.ord - current_level.ord
 
-  if level_diff == 0 || level_diff == 1 #|| level_diff < 0
+  if level_diff == 0 || level_diff == 1 || level_diff < 0
     true
   else
     false
@@ -123,13 +123,17 @@ def reconstruct_path(came_from, current)
   puts total_path.length
 end
 
+def get_g_score(g_score, node)
+
+end
+
 start_point = [$start_x, $start_y]
 start_g_score = dist_from_point_to_end(start_point)
 f_score = {}
 start = {start_point => start_g_score}
 
 open_set = [start]
-g_score = {start => 0}
+g_score = {start_point.hash => 0}
 came_from = {}
 moves = 0
 
@@ -141,8 +145,12 @@ while !open_set.empty?
   #puts "Before Neighbors"
   #puts open_set.join{", "}
   current = open_set.shift
+  current_coord = current.keys[0]
 
-  print_map[current.keys[0][1]][current.keys[0][0]] = '+'
+  print_map[current.keys[0][1]][current.keys[0][0]] = '*'
+  system('clear')
+  print_map.each {|l| puts l.join}
+  #gets #sleep 0.01
 
   if is_end?(current.keys[0])
     puts "END!!!"
@@ -156,21 +164,27 @@ while !open_set.empty?
     system('clear')
     print_map.each {|l| puts l.join}
     puts
-    sleep 0.01
+    # gets #sleep 0.01
 
     # all neighbors are 1 step away
-    tenative_g_score = g_score[start] + 1
-    if g_score[n].nil? || tenative_g_score < g_score[n]
+    # puts current_coord.join(', ')
+    # puts g_score
+    tenative_g_score = g_score[current_coord.hash] + 1
+    # puts tenative_g_score
+    # puts g_score[n.hash]
+    # gets
+    if g_score[n.hash].nil? || tenative_g_score < g_score[n.hash]
       #puts "Recording"
       #puts "Saving Current: #{current}"
       came_from[n] = current
-      g_score[n] = tenative_g_score
+      g_score[n.hash] = tenative_g_score
       f_score[n] = tenative_g_score + dist_from_point_to_end(n)
       if !in_open_set(open_set, n)
         open_set.push({n => f_score[n]})
       end
     end
   end
+  print_map[current.keys[0][1]][current.keys[0][0]] = '+'
   #puts "After Neighbors"
   #puts open_set.join{", "}
   #puts
