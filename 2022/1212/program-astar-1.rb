@@ -110,15 +110,17 @@ def in_came_from(came_from, item)
   false
 end
 
-def reconstruct_path(came_from, current)
+def reconstruct_path(came_from, current, grid)
   total_path = []
   while in_came_from(came_from, current.keys[0])
+    x, y = current.keys[0]
+    
+    grid[y][x] = '+'
+    # grid.each {|l| puts l.join}
+    # gets
+
     current = came_from[current.keys[0]]  
     total_path.push(current)
-    puts total_path.length
-    puts current
-    
-    break if current.keys[0].hash == [$start_x, $start_y].hash
   end
   puts total_path.length
 end
@@ -147,23 +149,26 @@ while !open_set.empty?
   current = open_set.shift
   current_coord = current.keys[0]
 
-  print_map[current.keys[0][1]][current.keys[0][0]] = '*'
-  system('clear')
-  print_map.each {|l| puts l.join}
+  #print_map[current.keys[0][1]][current.keys[0][0]] = '*'
+  #system('clear')
+  #print_map.each {|l| puts l.join}
   #gets #sleep 0.01
 
   if is_end?(current.keys[0])
     puts "END!!!"
-    reconstruct_path(came_from, current)
+    reconstruct_path(came_from, current, print_map)
+    print_map.each {|l| puts l.join}
+    puts
+
     exit
   end
 
   neighbors = get_neighbors(current.keys[0])
   neighbors.each do |n|
-    print_map[n[1]][n[0]] = '-' if print_map[n[1]][n[0]] != '+'
-    system('clear')
-    print_map.each {|l| puts l.join}
-    puts
+    # print_map[n[1]][n[0]] = '-' if print_map[n[1]][n[0]] != '+'
+    # system('clear')
+    # print_map.each {|l| puts l.join}
+    # puts
     # gets #sleep 0.01
 
     # all neighbors are 1 step away
@@ -184,7 +189,7 @@ while !open_set.empty?
       end
     end
   end
-  print_map[current.keys[0][1]][current.keys[0][0]] = '+'
+  # print_map[current.keys[0][1]][current.keys[0][0]] = '+'
   #puts "After Neighbors"
   #puts open_set.join{", "}
   #puts
