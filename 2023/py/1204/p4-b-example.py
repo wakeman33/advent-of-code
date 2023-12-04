@@ -1,14 +1,15 @@
-from aocd import get_data, submit
+# from aocd import get_data, submit
 import re
 
 day = 4
 year = 2023
-data = get_data(day=day, year=year)
+# data = get_data(day=day, year=year)
+file = open("./example.txt", "r")
 
 card_multiplier = {0: 0}
 win_cards = []
 my_cards = []
-lines = data.splitlines()
+lines = file.readlines()
 count = 0
 for card_number, line in enumerate(lines):
     card_info = line.split(":")[1].strip()
@@ -31,6 +32,7 @@ for card_number, line in enumerate(lines):
         card_multiplier[card_number] = 0
 
     multiplier = card_multiplier[card_number]
+
     print(f"Multiplier: {multiplier}")
     print(f"Card Number: {card_number}")
     for next_card_number in range(card_number + 1, (card_number + card_wins + 1)):
@@ -46,11 +48,12 @@ for card_number, line in enumerate(lines):
     count += 1
     print()
 
+print(card_multiplier)
 sum = 0
 for card_number, number_of_copies in card_multiplier.items():
     sum += (number_of_copies + 1)
 
 
 print(sum)
-result = submit(sum, part="b", day=day, year=year)
-print(result)
+# result = submit(sum, part="b", day=day, year=year)
+# print(result)
