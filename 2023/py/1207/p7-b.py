@@ -25,30 +25,54 @@ def custom_sort(hand_1):
 
 def identify_hand_type(hand_dict):
     card_type_count = len(hand_dict)
+
     if card_type_count == 1:
-        return "five_of_a_kind"
+            return "five_of_a_kind"
         # Five of a kind
     elif card_type_count == 2:
         card, count = list(hand_dict.items())[0]
         if count == 3 or count == 2:
-            return "full_house"
+            if "J" in hand_dict:
+                return "five_of_a_kind"
+            else:
+                return "full_house"
         else:
-            return "four_of_a_kind"
+            print(hand_dict)
+            if "J" in hand_dict:
+                print(hand_dict)
+                return "five_of_a_kind"
+            else:
+                return "four_of_a_kind"
         # Full House or Four of a kind
     elif card_type_count == 3:
         for card, count in hand_dict.items():
             if count == 2:
-                return "two_pair"
+                if "J" in hand_dict:
+                    if hand_dict["J"] == 1:
+                        return "full_house"
+                    else:
+                        return "four_of_a_kind"
+                else:
+                    return "two_pair"
             elif count == 3:
-                return "three_of_a_kind"
+                if "J" in hand_dict:
+                    return "four_of_a_kind"
+                else:
+                    return "three_of_a_kind"
         # Two pair or Three of a kind
     elif card_type_count == 4:
-        return "one_pair"
+        if "J" in hand_dict:
+            return "three_of_a_kind"
+        else:
+            return "one_pair"
         # One pair
     else:
-        return "high_card"
-print("HAND LEN")
-print(len(list_of_hands))
+        if "J" in hand_dict:
+            return "one_pair"
+        else:
+            return "high_card"
+
+
 for hand, bid in list_of_hands:
     print(f"HAND: {hand}")
     print(f"BID: {bid}")
@@ -64,10 +88,19 @@ for hand, bid in list_of_hands:
     else:
         sorted_hands[hand_type].append((hand, bid))
 
+    if hand == "333J3":
+        print(f"HAND TYPE IDENTIFIED: {hand_type}")
+        print(sorted_hands)
+
+
+
+print(sorted_hands["five_of_a_kind"])
+
 count = 0
 print(sorted_hands)
 for hand_type, hand_list in sorted_hands.items():
     new_sort = sorted(sorted_hands[hand_type], key=custom_sort, reverse=True)
+    print("NEW SORTED")
     sorted_hands[hand_type] = new_sort
 
     count += len(new_sort)
@@ -95,5 +128,5 @@ for rank, hand_tuple in enumerate(ranked_hand_tuple_list):
     sum += (rank + 1) * int(hand_tuple[1])
 
 print(sum)
-result = submit(sum , part="a", day=day, year=year)
+result = submit(sum , part="b", day=day, year=year)
 print(result)
