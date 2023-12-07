@@ -9,8 +9,7 @@ lines = list(map(lambda i: i.strip(), file.readlines()))
 data = get_data(day=day, year=year)
 lines = data.splitlines()
 
-# card_heiarchy = {"A": 1, "K": 2, "Q": 3, "J": 4, "T": 5, "9": 6, "8": 7, "7": 8, "6": 9, "5": 10, "4": 11, "3": 12, "2": 13}
-card_heiarchy = {"A": "a", "K": "b", "Q": "c", "J": "d", "T": "e", "9": "f", "8": "g", "7": "h", "6": "i", "5": "j", "4": "k", "3": "l", "2": "m"}
+card_heiarchy = {"A": "a", "K": "b", "Q": "c", "J": "n", "T": "e", "9": "f", "8": "g", "7": "h", "6": "i", "5": "j", "4": "k", "3": "l", "2": "m"}
 list_of_hands = list(map(lambda line: line.strip().split(" "),lines))
 print(list_of_hands)
 sorted_hands = {}
