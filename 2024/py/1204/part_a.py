@@ -1,6 +1,6 @@
 import re
 answer = 0
-f = open("/home/kepankra/src/personal/advent-of-code/2024/py/1204/example.txt", "r")
+f = open("/home/kepankra/src/personal/advent-of-code/2024/py/1204/data.txt", "r")
 
 ws = [
     list(line.strip())
@@ -9,40 +9,43 @@ ws = [
 max_x = len(ws[0])
 max_y = len(ws)
 
-list = [
+xy_list = [
     (x, y)
     for y in range(max_y)
     for x in range(max_x)
 ]
 
-def check_letter(list, letter):
+def check_letter(word_list, letter):
     return [
         (x, y)
-        for x, y in list
-        if ws[y][x] == letter
+        for x, y in word_list
+        if x < max_x and y < max_y and x > -1 and y > -1 and ws[y][x] == letter
     ]
 
-def prepare_check_list(list):
+def prepare_check_list(word_list):
     return [
-        [(x-1, y), (x-1, y+1), (x-1, y-1) (x+1, y),(x+1, y-1), (x+1, y+1), (x, y+1), (x, y-1)]
-        for x, y in list
+        [
+            (x + a*1, y + b*1),
+            (x + a*2, y + b*2),
+            (x + a*3, y + b*3),
+        ]
+        for x, y in word_list
+        for a in (-1, 0, 1)
+        for b in (-1, 0, 1)
+        if not (a == 0 and b == 0)
     ]
 
-search = list("XMAS")
+def check_word(char_list, word):
+    return all([
+        True if x < max_x and y < max_y and x > -1 and y > -1 and ws[y][x] == l else False
+        for (x, y), l in list(zip(char_list, list(word)))
+    ])
 
-possible_words = check_letter(list, search.pop(0))
-
-for char in search:
-    list_to_search = prepare_check_list(possible_words)
-    possible_words = check_letter()
-
-
-print(f"M-list: {m_list}")
-
-print(f"max_x: {max_x}")
-print(f"max_y: {max_y}")
-
-print(ws)
+possible_words = check_letter(xy_list, 'X')
+answer = sum([
+    1 if check_word(list_to_search, "MAS") else 0
+    for list_to_search in prepare_check_list(possible_words) 
+])
 
 print(f"Answer: {answer}")
-# Answer 167090022
+# Answer 2468
