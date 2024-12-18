@@ -23,27 +23,32 @@ def check_letter(word_list, letter):
     ]
 
 def prepare_check_list(word_list):
+    flow = {
+        (-1, -1): (1, -1),
+        (1, -1): (1, 1),
+        (1, 1): (-1, 1),
+        (-1, 1): (-1, -1),
+    }
     return [
         [
-            (x + a*1, y + b*1),
-            (x + a*2, y + b*2),
-            (x + a*3, y + b*3),
+            ((x + a, y + b), "M"),
+            ((x + -1*a, y + -1*b), "S"),
+            ((x + c, y + d), "M"),
+            ((x + -1*c, y + -1*d), "S"),
         ]
         for x, y in word_list
-        for a in (-1, 0, 1)
-        for b in (-1, 0, 1)
-        if not (a == 0 and b == 0)
+        for (a, b), (c, d) in flow.items()
     ]
 
-def check_word(char_list, word):
+def check_word(char_list):
     return all([
         True if x < max_x and y < max_y and x > -1 and y > -1 and ws[y][x] == l else False
-        for (x, y), l in list(zip(char_list, list(word)))
+        for (x, y), l in char_list
     ])
 
-possible_words = check_letter(xy_list, 'X')
+possible_words = check_letter(xy_list, 'A')
 answer = sum([
-    1 if check_word(list_to_search, "MAS") else 0
+    1 if check_word(list_to_search) else 0
     for list_to_search in prepare_check_list(possible_words) 
 ])
 
